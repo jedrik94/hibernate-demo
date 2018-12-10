@@ -5,15 +5,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import pl.jedrik94.model.Student;
 
+import java.util.List;
+
 public class App {
     public static void main(String[] args) {
 
-        Student student = new Student();
-        student.setFirstName("Zbyszek");
-        student.setLastName("Kowal");
-        student.setEmail("zbycho_69@gmail.com");
-
-        System.out.println(student);
+        List<Student> studentList;
 
         try (SessionFactory factory = new Configuration().
                 configure("hibernate.cfg.xml")
@@ -23,20 +20,26 @@ public class App {
             Session session = factory.getCurrentSession();
 
             session.beginTransaction();
-            session.save(student);
+
+            studentList = getKowalskiStudentList(session);
+
             session.getTransaction().commit();
-
-            System.out.println("Saved student id: " + student.getId());
-
-            session = factory.getCurrentSession();
-            session.beginTransaction();
-
-            System.out.println("Retrieving student with id: " + student.getId());
-
-            Student sameStudent = session.get(Student.class, student.getId());
-            session.getTransaction().commit();
-
-            System.out.println(sameStudent);
         }
+
+        for (Student s : studentList) {
+            System.out.println(s);
+        }
+    }
+
+    private static List<Student> getWholeStudentList(Session session) {
+        return session.createQuery("from Student").getResultList();
+    }
+
+    private static List<Student> getGmailStudentList(Session session) {
+        return session.createQuery("from Student s where s.email like '%gmail.com'").getResultList();
+    }
+
+    private static List<Student> getKowalskiStudentList(Session session) {
+        return session.createQuery("from Student s where s.lastName = 'Kowalski'").getResultList();
     }
 }

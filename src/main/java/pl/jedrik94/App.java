@@ -21,14 +21,14 @@ public class App {
 
             Student student = session.get(Student.class, entityId);
 
-            student.setEmail("zupa123@apud.moc");
+            session.delete(student);
 
             session.getTransaction().commit();
 
             session = factory.getCurrentSession();
             session.beginTransaction();
 
-            session.createQuery("update Student set email = 'foo@bar.test'")
+            session.createQuery("delete Student s where s.firstName = 'Zbyszek'")
                     .executeUpdate();
 
             session.getTransaction().commit();

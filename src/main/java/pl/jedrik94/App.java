@@ -9,25 +9,29 @@ import java.util.List;
 
 public class App {
     public static void main(String[] args) {
-
-        List<Student> studentList;
-
         try (SessionFactory factory = new Configuration().
                 configure("hibernate.cfg.xml")
                 .addAnnotatedClass(Student.class)
                 .buildSessionFactory()) {
 
             Session session = factory.getCurrentSession();
-
             session.beginTransaction();
 
-            studentList = getKowalskiStudentList(session);
+            int entityId = 6;
+
+            Student student = session.get(Student.class, entityId);
+
+            student.setEmail("zupa123@apud.moc");
 
             session.getTransaction().commit();
-        }
 
-        for (Student s : studentList) {
-            System.out.println(s);
+            session = factory.getCurrentSession();
+            session.beginTransaction();
+
+            session.createQuery("update Student set email = 'foo@bar.test'")
+                    .executeUpdate();
+
+            session.getTransaction().commit();
         }
     }
 

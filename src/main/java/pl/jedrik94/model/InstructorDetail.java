@@ -20,4 +20,16 @@ public class InstructorDetail implements Serializable {
 
     @Column(name = "hobby")
     private String hobby;
+
+    @OneToOne(mappedBy = "instructorDetail", cascade = CascadeType.ALL)
+    private Instructor instructor;
+
+    @Override
+    public String toString() {
+        return "InstructorDetail{" +
+                "id=" + id +
+                ", youtubeChannel='" + youtubeChannel + '\'' +
+                ", hobby='" + hobby + '\'' +
+                '}';
+    }
 }

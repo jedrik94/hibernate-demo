@@ -19,9 +19,12 @@ public class App {
             Session session = factory.getCurrentSession();
             session.beginTransaction();
 
-            Optional<Instructor> tmpInstructor = Optional.ofNullable(session.get(Instructor.class, 3));
+            Optional<InstructorDetail> tmpInstructor = Optional.ofNullable(session.get(InstructorDetail.class, 101));
 
-            tmpInstructor.ifPresent(session::delete);
+            tmpInstructor.ifPresent(instructorDetail -> {
+                System.out.println(instructorDetail);
+                System.out.println(instructorDetail.getInstructor());
+            });
 
             session.getTransaction().commit();
         }

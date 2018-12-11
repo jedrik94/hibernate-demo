@@ -3,7 +3,7 @@ package pl.jedrik94;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import pl.jedrik94.model.Student;
+import pl.jedrik94.model.Employee;
 
 import java.util.List;
 
@@ -11,39 +11,76 @@ public class App {
     public static void main(String[] args) {
         try (SessionFactory factory = new Configuration().
                 configure("hibernate.cfg.xml")
-                .addAnnotatedClass(Student.class)
+                .addAnnotatedClass(Employee.class)
                 .buildSessionFactory()) {
 
-            Session session = factory.getCurrentSession();
-            session.beginTransaction();
+            Session session;
 
-            int entityId = 6;
+            {
+                session = factory.getCurrentSession();
+                session.beginTransaction();
 
-            Student student = session.get(Student.class, entityId);
+                Employee employeeAndrzej = new Employee();
+                employeeAndrzej.setFirstName("Andrzej");
+                employeeAndrzej.setLastName("Nowak");
+                employeeAndrzej.setCompany("BckPuddingCompany");
 
-            session.delete(student);
+                Employee employeeTomek = new Employee();
 
-            session.getTransaction().commit();
+                employeeTomek.setFirstName("Tomek");
+                employeeTomek.setLastName("Kotek");
+                employeeTomek.setCompany("GreenPuddingCompany");
 
-            session = factory.getCurrentSession();
-            session.beginTransaction();
+                session.save(employeeAndrzej);
+                session.save(employeeTomek);
 
-            session.createQuery("delete Student s where s.firstName = 'Zbyszek'")
-                    .executeUpdate();
+                session.getTransaction().commit();
+            }
 
-            session.getTransaction().commit();
+            {
+                session = factory.getCurrentSession();
+                session.beginTransaction();
+
+                int entityId = 2;
+
+                Employee newEmployee = session.get(Employee.class, entityId);
+
+                newEmployee.setCompany("Bck&WhtPuddingCompany");
+
+                session.getTransaction().commit();
+            }
+
+            {
+                session = factory.getCurrentSession();
+                session.beginTransaction();
+
+                List<Employee> employeeList = session.createQuery("from Employee e where e.company like '%PuddingCompany'")
+                        .getResultList();
+
+                printOutEmployees(employeeList);
+
+                session.getTransaction().commit();
+            }
+
+            {
+                session = factory.getCurrentSession();
+                session.beginTransaction();
+
+                int entityId = 1;
+
+                Employee newEmployee = session.get(Employee.class, entityId);
+
+                session.delete(newEmployee);
+
+                session.getTransaction().commit();
+            }
         }
     }
 
-    private static List<Student> getWholeStudentList(Session session) {
-        return session.createQuery("from Student").getResultList();
+    private static void printOutEmployees(List<Employee> employeeList) {
+        for (Employee e : employeeList) {
+            System.out.println(e);
+        }
     }
 
-    private static List<Student> getGmailStudentList(Session session) {
-        return session.createQuery("from Student s where s.email like '%gmail.com'").getResultList();
-    }
-
-    private static List<Student> getKowalskiStudentList(Session session) {
-        return session.createQuery("from Student s where s.lastName = 'Kowalski'").getResultList();
-    }
 }

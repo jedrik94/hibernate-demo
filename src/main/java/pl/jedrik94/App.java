@@ -3,84 +3,36 @@ package pl.jedrik94;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import pl.jedrik94.model.Employee;
-
-import java.util.List;
+import pl.jedrik94.model.Instructor;
+import pl.jedrik94.model.InstructorDetail;
 
 public class App {
     public static void main(String[] args) {
         try (SessionFactory factory = new Configuration().
                 configure("hibernate.cfg.xml")
-                .addAnnotatedClass(Employee.class)
+                .addAnnotatedClass(Instructor.class)
+                .addAnnotatedClass(InstructorDetail.class)
                 .buildSessionFactory()) {
 
-            Session session;
+            Instructor instructor = new Instructor();
 
-            {
-                session = factory.getCurrentSession();
-                session.beginTransaction();
+            instructor.setFirstName("Milosz");
+            instructor.setLastName("Wojtkowiak");
+            instructor.setEmail("milosz04@gmail.com");
 
-                Employee employeeAndrzej = new Employee();
-                employeeAndrzej.setFirstName("Andrzej");
-                employeeAndrzej.setLastName("Nowak");
-                employeeAndrzej.setCompany("BckPuddingCompany");
+            InstructorDetail instructorDetail = new InstructorDetail();
 
-                Employee employeeTomek = new Employee();
+            instructorDetail.setYoutubeChannel("www.youtube.com/milosz04");
+            instructorDetail.setHobby("Gaming");
 
-                employeeTomek.setFirstName("Tomek");
-                employeeTomek.setLastName("Kotek");
-                employeeTomek.setCompany("GreenPuddingCompany");
+            instructor.setInstructorDetail(instructorDetail);
 
-                session.save(employeeAndrzej);
-                session.save(employeeTomek);
+            Session session = factory.getCurrentSession();
+            session.beginTransaction();
 
-                session.getTransaction().commit();
-            }
+            session.save(instructor);
 
-            {
-                session = factory.getCurrentSession();
-                session.beginTransaction();
-
-                int entityId = 2;
-
-                Employee newEmployee = session.get(Employee.class, entityId);
-
-                newEmployee.setCompany("Bck&WhtPuddingCompany");
-
-                session.getTransaction().commit();
-            }
-
-            {
-                session = factory.getCurrentSession();
-                session.beginTransaction();
-
-                List<Employee> employeeList = session.createQuery("from Employee e where e.company like '%PuddingCompany'")
-                        .getResultList();
-
-                printOutEmployees(employeeList);
-
-                session.getTransaction().commit();
-            }
-
-            {
-                session = factory.getCurrentSession();
-                session.beginTransaction();
-
-                int entityId = 1;
-
-                Employee newEmployee = session.get(Employee.class, entityId);
-
-                session.delete(newEmployee);
-
-                session.getTransaction().commit();
-            }
+            session.getTransaction().commit();
         }
     }
-
-    private static void printOutEmployees(List<Employee> employeeList) {
-        for (Employee e : employeeList) {
-            System.out.println(e);
-        }
-    }
-
 }

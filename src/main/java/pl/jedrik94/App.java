@@ -19,20 +19,21 @@ public class App {
             Session session = factory.getCurrentSession();
             session.beginTransaction();
 
-            Instructor instructorJedrzej = new Instructor();
+            int instructorId = 1;
 
-            instructorJedrzej.setFirstName("Jedrzej");
-            instructorJedrzej.setLastName("Wojtkowiak");
-            instructorJedrzej.setEmail("jedrik94@gmail.com");
+            Instructor instructorTmp = session.get(Instructor.class, instructorId);
 
-            InstructorDetail instructorDetailJedrzej = new InstructorDetail();
+            Course courseJava = new Course();
+            courseJava.setTitle("Java Course");
 
-            instructorDetailJedrzej.setYoutubeChannel("www.youtube.com/jedirk94");
-            instructorDetailJedrzej.setHobby("CrossFit");
+            Course courseCpp = new Course();
+            courseCpp.setTitle("Cpp Course");
 
-            instructorJedrzej.setInstructorDetail(instructorDetailJedrzej);
+            instructorTmp.addCourse(courseJava);
+            instructorTmp.addCourse(courseCpp);
 
-            session.save(instructorJedrzej);
+            session.save(courseJava);
+            session.save(courseCpp);
 
             session.getTransaction().commit();
         }

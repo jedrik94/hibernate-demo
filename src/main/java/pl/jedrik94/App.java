@@ -3,10 +3,9 @@ package pl.jedrik94;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import pl.jedrik94.model.Course;
 import pl.jedrik94.model.Instructor;
 import pl.jedrik94.model.InstructorDetail;
-
-import java.util.Optional;
 
 public class App {
     public static void main(String[] args) {
@@ -14,17 +13,26 @@ public class App {
                 configure("hibernate.cfg.xml")
                 .addAnnotatedClass(Instructor.class)
                 .addAnnotatedClass(InstructorDetail.class)
+                .addAnnotatedClass(Course.class)
                 .buildSessionFactory()) {
 
             Session session = factory.getCurrentSession();
             session.beginTransaction();
 
-            Optional<InstructorDetail> tmpInstructor = Optional.ofNullable(session.get(InstructorDetail.class, 101));
+            Instructor instructorJedrzej = new Instructor();
 
-            tmpInstructor.ifPresent(instructorDetail -> {
-                System.out.println(instructorDetail);
-                System.out.println(instructorDetail.getInstructor());
-            });
+            instructorJedrzej.setFirstName("Jedrzej");
+            instructorJedrzej.setLastName("Wojtkowiak");
+            instructorJedrzej.setEmail("jedrik94@gmail.com");
+
+            InstructorDetail instructorDetailJedrzej = new InstructorDetail();
+
+            instructorDetailJedrzej.setYoutubeChannel("www.youtube.com/jedirk94");
+            instructorDetailJedrzej.setHobby("CrossFit");
+
+            instructorJedrzej.setInstructorDetail(instructorDetailJedrzej);
+
+            session.save(instructorJedrzej);
 
             session.getTransaction().commit();
         }

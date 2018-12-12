@@ -7,29 +7,26 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name = "instructor_detail")
-public class InstructorDetail implements Serializable {
+@Table(name = "course")
+public class Course implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
-    @Column(name = "youtube_channel")
-    private String youtubeChannel;
+    @Column(name = "title")
+    private String title;
 
-    @Column(name = "hobby")
-    private String hobby;
-
-    @OneToOne(mappedBy = "instructorDetail", cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "instructor_id")
     private Instructor instructor;
 
     @Override
     public String toString() {
-        return "InstructorDetail{" +
+        return "Course{" +
                 "id=" + id +
-                ", youtubeChannel='" + youtubeChannel + '\'' +
-                ", hobby='" + hobby + '\'' +
+                ", title='" + title + '\'' +
                 ", instructor=" + instructor.getFirstName() + " " + instructor.getLastName() +
                 '}';
     }

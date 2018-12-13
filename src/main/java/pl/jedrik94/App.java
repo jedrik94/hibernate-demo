@@ -23,17 +23,7 @@ public class App {
 
             Instructor instructorTmp = session.get(Instructor.class, instructorId);
 
-            Course courseJava = new Course();
-            courseJava.setTitle("Java Course");
-
-            Course courseCpp = new Course();
-            courseCpp.setTitle("Cpp Course");
-
-            instructorTmp.addCourse(courseJava);
-            instructorTmp.addCourse(courseCpp);
-
-            session.save(courseJava);
-            session.save(courseCpp);
+            System.out.println(instructorTmp);
 
             session.getTransaction().commit();
         }

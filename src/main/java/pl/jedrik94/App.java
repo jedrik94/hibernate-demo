@@ -3,10 +3,13 @@ package pl.jedrik94;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.query.Query;
 import pl.jedrik94.model.Course;
 import pl.jedrik94.model.Instructor;
 import pl.jedrik94.model.InstructorDetail;
+import pl.jedrik94.model.Review;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 public class App {
     public static void main(String[] args) {
@@ -15,23 +18,24 @@ public class App {
                 .addAnnotatedClass(Instructor.class)
                 .addAnnotatedClass(InstructorDetail.class)
                 .addAnnotatedClass(Course.class)
+                .addAnnotatedClass(Review.class)
                 .buildSessionFactory()) {
 
             Session session = factory.getCurrentSession();
             session.beginTransaction();
 
-            int instructorId = 1;
+            int courseId = 202;
 
-            Query<Instructor> query = session.createQuery("select i from Instructor i " +
-                    "JOIN FETCH i.courses " +
-                    "where i.id = :instructorId");
-            query.setParameter("instructorId", instructorId);
+            Optional<Course> courseTmp = Optional.ofNullable(session.get(Course.class, courseId));
 
-            Instructor instructorTmp = query.getSingleResult();
+            Review reviewDope = new Review();
+            reviewDope.setComment("Yea.. Ez n dope course. Peace!!");
+            Review reviewOp = new Review();
+            reviewOp.setComment("this is OP!!!11 DELETe IIT");
+
+            courseTmp.ifPresent(course -> course.addReviews(Arrays.asList(reviewOp, reviewDope)));
 
             session.getTransaction().commit();
-
-            System.out.println(instructorTmp);
         }
     }
 }
